@@ -1,4 +1,6 @@
 {
+  "buildCommand": "cd artifacts/vera-protection && npm install && npx vite build --config vite.config.ts",
+  "outputDirectory": "artifacts/vera-protection/dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]

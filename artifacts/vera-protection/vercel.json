@@ -1,4 +1,6 @@
 {
+  "buildCommand": "npm install && npx vite build --config vite.config.ts",
+  "outputDirectory": "dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }
   ]
