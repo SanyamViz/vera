@@ -1,5 +1,5 @@
 {
-  "buildCommand": "npm install && npx vite build --config vite.config.ts",
+  "buildCommand": "npm install --legacy-peer-deps && npx vite build --config vite.config.ts",
   "outputDirectory": "dist",
   "rewrites": [
     { "source": "/(.*)", "destination": "/index.html" }

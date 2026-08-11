@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "build": "cd artifacts/vera-protection && npm install && npx vite build --config vite.config.ts"
+    "build": "cd artifacts/vera-protection && npm install --legacy-peer-deps && npx vite build --config vite.config.ts"
   },
   "private": true,
   "dependencies": {
