@@ -1,0 +1,575 @@
+I already have a working VERA prototype in this Replit project, especially the existing `/protect` page. I need you to MODIFY the existing project, not rebuild it from scratch.
+
+VERA is an image-theft detection and protection tool for Indian handmade sellers. The core flow is: seller uploads an original product image → VERA analyzes it → seller can compare it with a suspected copied image → VERA gives an ACTUAL image similarity result → the result appears as an alert/dashboard detection.
+
+IMPORTANT: Spend the majority of this task making ONE feature genuinely functional. Do NOT waste time redesigning the UI.
+
+==================================================
+
+1. KEEP THE EXISTING DESIGN
+   ==================================================
+
+Preserve the current VERA visual design, layout, typography, colors, animations, navigation, sidebar, cards, buttons, and overall styling.
+
+Do NOT replace the existing `/protect` page with a new design.
+
+Do NOT remove existing functionality.
+
+Only add the functionality described below and integrate it naturally into the current interface.
+
+If the current project already has components for upload, alerts, dashboard, products, etc., reuse them instead of creating duplicate components.
+
+==================================================
+2. MAKE IMAGE COMPARISON ACTUALLY FUNCTIONAL
+============================================
+
+This is the most important requirement.
+
+Implement a REAL client-side image similarity comparison in JavaScript/React.
+
+No backend.
+No external API.
+No fake result.
+No Math.random().
+No hardcoded "97%" / "94%" / etc.
+
+The user must be able to upload:
+
+A. Original product image
+B. Suspected copied/stolen image
+
+Then click:
+
+"Compare Images"
+
+The application must actually analyze the two uploaded images in the browser.
+
+Use an average-hash or perceptual-hash style algorithm.
+
+Recommended implementation:
+
+1. Load both uploaded images into HTML Canvas.
+2. Resize each image to a small grayscale grid, for example 16x16.
+3. Calculate the average grayscale value.
+4. Generate a binary hash by comparing each pixel against the average.
+5. Compare the two hashes using Hamming distance.
+6. Convert the Hamming distance into a similarity percentage.
+
+Formula:
+
+similarity = (1 - hammingDistance / totalHashBits) * 100
+
+Round the result to the nearest whole number.
+
+The result MUST depend on the actual uploaded images.
+
+For example:
+
+* identical images should produce approximately 100%
+* resized/cropped/compressed versions should still produce a reasonably high similarity
+* clearly different images should produce a much lower similarity
+
+If necessary, use a slightly more robust perceptual hash implementation, but keep it entirely client-side and dependency-light.
+
+==================================================
+3. INTEGRATE IT INTO THE EXISTING /protect FLOW
+===============================================
+
+Do not create a separate standalone page.
+
+Use the existing `/protect` page.
+
+The flow should become:
+
+ORIGINAL IMAGE
+[ existing upload UI ]
+
+↓
+
+SUSPECTED / COPIED IMAGE
+[ add second upload area naturally into the existing design ]
+
+↓
+
+[ Compare Images ]
+
+↓
+
+VERA ANALYSIS
+
+↓
+
+Display the actual calculated result:
+
+"Image Match Detected"
+
+"XX% Visual Similarity"
+
+Where XX is the REAL calculated percentage.
+
+Do not hardcode this number.
+
+Also display a confidence label based on the REAL percentage:
+
+90–100%:
+"Very High Match"
+
+75–89%:
+"High Match"
+
+60–74%:
+"Possible Match"
+
+Below 60%:
+"Low Match"
+
+Make the result visually consistent with the existing VERA UI.
+
+==================================================
+4. ADD A REALISTIC RESULT CARD
+==============================
+
+After comparison, show a result card using the existing VERA design language.
+
+It should contain:
+
+* Original image preview
+* Suspected image preview
+* Actual similarity percentage
+* Match confidence label
+* Platform
+* Suspected listing price
+* Original price
+* Seller name
+* Detection timestamp
+
+Example:
+
+IMAGE MATCH DETECTED
+
+94% VISUAL SIMILARITY
+Very High Match
+
+Original Product
+₹899
+
+Suspected Listing
+Meesho
+₹399
+
+Seller:
+HomeDecor_Store
+
+Detected:
+2 hours ago
+
+Do not make the 94% example hardcoded. The similarity must come from the image algorithm.
+
+The platform, seller, price and timestamp can come from the mock data described below.
+
+==================================================
+5. ADD MOCK PRODUCT DATA
+========================
+
+Create a reusable data file if the project structure allows it:
+
+src/data/sampleProducts.js
+
+Export this array:
+
+const sampleProducts = [
+{
+id: "VERA-001",
+productName: "Hand-Painted Blue Ceramic Mug",
+originalPrice: 899,
+originalImage: "/products/ceramic-mug.jpg",
+
+```
+stolenMatch: {
+  platform: "Meesho",
+  listingTitle: "Blue Handmade Ceramic Coffee Mug",
+  image: "/mock-matches/meesho-mug.jpg",
+  price: 399,
+  confidence: 97,
+  seller: "HomeDecor_Store",
+  listingUrl: "#",
+  detectedAt: "2 hours ago"
+},
+
+status: "high-risk"
+```
+
+},
+
+{
+id: "VERA-002",
+productName: "Macramé Wall Hanging",
+originalPrice: 1499,
+originalImage: "/products/macrame-wall-hanging.jpg",
+
+```
+stolenMatch: {
+  platform: "Etsy",
+  listingTitle: "Boho Macrame Wall Decor Handmade",
+  image: "/mock-matches/etsy-macrame.jpg",
+  price: 799,
+  confidence: 94,
+  seller: "DecorNestShop",
+  listingUrl: "#",
+  detectedAt: "5 hours ago"
+},
+
+status: "high-risk"
+```
+
+},
+
+{
+id: "VERA-003",
+productName: "Floral Soy Wax Candle",
+originalPrice: 699,
+originalImage: "/products/floral-candle.jpg",
+
+```
+stolenMatch: {
+  platform: "Instagram",
+  listingTitle: "Aesthetic Floral Candle",
+  image: "/mock-matches/instagram-candle.jpg",
+  price: 349,
+  confidence: 91,
+  seller: "@homevibes_india",
+  listingUrl: "#",
+  detectedAt: "Yesterday"
+},
+
+status: "high-risk"
+```
+
+},
+
+{
+id: "VERA-004",
+productName: "Resin Pressed-Flower Tray",
+originalPrice: 1299,
+originalImage: "/products/resin-tray.jpg",
+
+```
+stolenMatch: {
+  platform: "Meesho",
+  listingTitle: "Transparent Floral Resin Serving Tray",
+  image: "/mock-matches/meesho-tray.jpg",
+  price: 599,
+  confidence: 88,
+  seller: "CraftyHomeIndia",
+  listingUrl: "#",
+  detectedAt: "Yesterday"
+},
+
+status: "review"
+```
+
+}
+];
+
+IMPORTANT:
+The confidence values in this mock data are ONLY for simulated marketplace/dashboard detections.
+
+When the user actually uploads two images and clicks Compare Images, NEVER use these hardcoded confidence values.
+
+The uploaded-image comparison must generate the real percentage.
+
+==================================================
+6. DASHBOARD / ALERT INTEGRATION
+================================
+
+If the project already contains Dashboard and Alert screens, connect the mock product data to them.
+
+Use sampleProducts to populate the existing cards/tables/lists.
+
+Do not redesign the Dashboard.
+
+The dashboard should feel like a real monitoring system.
+
+Show detections such as:
+
+VERA-001
+Hand-Painted Blue Ceramic Mug
+Meesho
+97%
+₹399
+High Risk
+
+VERA-002
+Macramé Wall Hanging
+Etsy
+94%
+₹799
+High Risk
+
+VERA-003
+Floral Soy Wax Candle
+Instagram
+91%
+₹349
+High Risk
+
+VERA-004
+Resin Pressed-Flower Tray
+Meesho
+88%
+₹599
+Review
+
+The marketplace data is MOCK/DEMO DATA.
+
+Do not claim that these are real scraped listings.
+
+Add a subtle "Demo Detection" or "Simulated Match" label where appropriate if it fits the current UI.
+
+==================================================
+7. CONNECT THE REAL COMPARISON TO THE ALERT
+===========================================
+
+When the user uploads two images and gets a real similarity result, create/display a detection using that result.
+
+For example:
+
+Original:
+uploaded image
+
+Suspected:
+uploaded image
+
+Platform:
+Meesho
+
+Seller:
+HomeDecor_Store
+
+Original price:
+₹899
+
+Suspected price:
+₹399
+
+REAL similarity:
+calculated from uploaded images
+
+This means:
+
+Marketplace metadata = mock/demo data
+Image similarity = REAL
+
+This distinction is extremely important.
+
+==================================================
+8. IMAGE UPLOAD EXPERIENCE
+==========================
+
+Use the existing upload component if one exists.
+
+Allow:
+
+* drag and drop
+* clicking to select
+* image preview
+* replacing the selected image
+* removing/resetting an image
+
+Support common image types:
+
+PNG
+JPG
+JPEG
+WEBP
+
+Prevent the Compare button from running until both images are uploaded.
+
+Show a clear disabled state when one or both images are missing.
+
+Show a loading/processing state while the browser calculates the hashes.
+
+Do not upload images to any server.
+
+Everything should happen locally in the browser.
+
+==================================================
+9. DEMO MATCH BUTTON
+====================
+
+Add a small optional:
+
+"Try Demo Match"
+
+button if it fits naturally into the existing UI.
+
+This should load two local demo images into the comparison flow so I can reliably demonstrate the feature to hackathon judges.
+
+Do NOT fake the result.
+
+The demo images themselves should actually go through the same image comparison algorithm.
+
+If the project does not currently contain suitable demo images, create simple local placeholder/demo images or use existing project assets.
+
+Do not use external image URLs that could break during the presentation.
+
+==================================================
+10. DO NOT OVERBUILD
+====================
+
+Do NOT add:
+
+* backend
+* database
+* authentication changes
+* external reverse image search API
+* real Meesho scraping
+* real Etsy scraping
+* real Instagram scraping
+* blockchain
+* payment system
+* complex ML model
+* unnecessary dependencies
+* unnecessary new pages
+
+The goal is to make ONE technically real feature extremely reliable.
+
+==================================================
+11. ERROR HANDLING
+==================
+
+Handle:
+
+* unsupported file type
+* image loading failure
+* missing original image
+* missing suspected image
+* comparison errors
+* extremely large images
+
+Give clean user-friendly messages.
+
+Do not expose raw JavaScript errors to the user.
+
+==================================================
+12. CODE QUALITY
+================
+
+Keep the implementation modular.
+
+If appropriate, create something like:
+
+src/
+data/
+sampleProducts.js
+
+utils/
+imageSimilarity.js
+
+components/
+ImageComparison.jsx
+
+But first inspect the existing project and reuse its architecture where possible.
+
+Do not create duplicate components if equivalent components already exist.
+
+Keep the image comparison algorithm isolated in a reusable utility function.
+
+Example API:
+
+compareImages(imageA, imageB)
+
+which returns:
+
+{
+similarity: 94,
+confidence: "Very High Match"
+}
+
+But the exact implementation can follow the existing project architecture.
+
+==================================================
+13. TEST IT YOURSELF
+====================
+
+After implementation, actually test the flow.
+
+Test at minimum:
+
+1. Upload identical image twice.
+   Expected: very high similarity / approximately 100%.
+
+2. Upload a modified/resized/compressed version.
+   Expected: relatively high similarity.
+
+3. Upload two clearly different images.
+   Expected: significantly lower similarity.
+
+4. Try clicking Compare with only one image.
+   Expected: friendly validation message.
+
+5. Refresh `/protect`.
+   Expected: page still works.
+
+6. Check existing Dashboard.
+   Expected: existing UI still works.
+
+7. Check all existing navigation/routes.
+   Expected: no broken routes.
+
+Fix any console errors or build errors you introduce.
+
+==================================================
+14. IMPORTANT UI RULE
+=====================
+
+The current VERA design is already built.
+
+DO NOT replace it with a generic AI-generated dashboard.
+
+DO NOT change the existing visual identity.
+
+The feature should look like it was always part of VERA.
+
+Use existing buttons, cards, spacing, colors, typography and animations.
+
+==================================================
+15. FINAL SUCCESS CRITERIA
+==========================
+
+When you are finished, I should be able to open:
+
+/protect
+
+Then:
+
+1. Upload an original product image.
+2. Upload a suspected copied image.
+3. Click "Compare Images".
+4. See VERA actually calculate the image similarity in the browser.
+5. See the real percentage.
+6. See the result presented as a VERA detection.
+7. See the detection connected to the existing alert/dashboard experience.
+8. See the sample marketplace detections on the Dashboard.
+9. Refresh the app without errors.
+
+The MOST IMPORTANT success criterion:
+
+If I upload two completely different images, the percentage must change accordingly.
+
+If I upload the same image twice, the percentage should be approximately 100%.
+
+NEVER fake the comparison result.
+
+Before making changes, inspect the existing project structure and identify the current `/protect`, Dashboard, Alert, upload and styling components. Then modify the minimum number of files necessary.
+
+Do not ask me to manually copy code between files. Make the changes directly in this Replit project.
+
+At the end, give me a concise summary of:
+
+* files changed
+* what is now genuinely functional
+* how to test it
+* any dependencies added
+* whether the build passes
+* the exact URL/path I should open to demo it

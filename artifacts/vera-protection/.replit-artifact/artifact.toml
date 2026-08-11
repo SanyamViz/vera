@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "VERA Protection"
+description = "A standalone protection workspace for handmade sellers to fingerprint product photos, manage authenticity certificates, review copy alerts, and prepare takedown notices."
+version = "1.0.0"
+id = "artifacts/vera-protection"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 23312
+
+[services.development]
+run = "pnpm --filter @workspace/vera-protection run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/vera-protection", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/vera-protection/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "23312"
+BASE_PATH = "/"
